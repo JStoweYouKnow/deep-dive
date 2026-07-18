@@ -46,3 +46,17 @@ Open `index.html` in a browser, or serve this folder with any static server. No 
 ## Research studio features
 
 The current app includes a timeline, weekly briefing, source-evidence thread view, relationship map, thread notebooks, trail-grounded question answering, reading intents and filters, reflections, a quick-save flow, an optional Chrome extension, and Markdown export of a research story. All activity, notes, reading feedback, and reflections stay in browser storage.
+
+## Built with Codex & GPT-5.6
+
+Deep Dive was designed and built collaboratively with **Codex powered by GPT-5.6**. Codex was used as an end-to-end product development partner: translating the initial concept into an MVP plan, designing the local-first data model and recommendation flow, implementing the interface and browser extension, tightening the privacy onboarding, validating JavaScript and deployment configuration, and deploying the app to Vercel.
+
+GPT-5.6 was especially useful for iterating across product, design, and implementation in one workflow. It helped turn broad ideas—such as “notice the topics I keep circling”—into concrete features including explainable threads, source-linked reading, feedback-aware ranking, and a field-notebook visual language. The shipped app does **not** send private activity to a model at runtime: its in-browser theme grouping is deterministic, and Crossref is queried only when a user explicitly asks for reading.
+
+### Development workflow
+
+1. Define the user problem, privacy principles, and success criteria.
+2. Build a runnable local-first prototype with sample and imported activity.
+3. Iterate on interaction design, accessibility, responsive styling, and error states.
+4. Verify the static application and configuration, then deploy the production build.
+5. Package the source in this repository so the work can be reviewed and extended.
