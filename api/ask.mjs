@@ -1,6 +1,7 @@
-import { generateText } from 'ai';
+import { embedMany, generateText } from 'ai';
+import { cosineSimilarity } from '../lib/retrieval.mjs';
 
-const MAX_SIGNALS = 18;
+const MAX_SIGNALS = 36;
 const MAX_SIGNAL_CHARS = 700;
 
 function sanitizeSignals(signals) {
@@ -28,7 +29,24 @@ export default async function handler(request, response) {
     return response.status(400).json({ error: 'A question and at least one research signal are required.' });
   }
 
-  const evidence = signals
+  let rankedSignals = signals;
+  try {
+    const { embeddings } = await embedMany({
+      model: 'openai/text-embedding-3-small',
+      values: [question, ...signals.map(signal => signal.text)],
+    });
+    const [questionEmbedding, ...signalEmbeddings] = embeddings;
+    rankedSignals = signals
+      .map((signal, index) => ({ signal, score: cosineSimilarity(questionEmbedding, signalEmbeddings[index]) }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 12)
+      .map(({ signal }) => signal);
+  } catch (error) {
+    console.warn('Deep Dive semantic retrieval unavailable; using bounded local candidates.', error);
+    rankedSignals = signals.slice(0, 12);
+  }
+
+  const evidence = rankedSignals
     .map((signal) => `[${signal.id}] ${signal.type}${signal.createdAt ? `, ${signal.createdAt}` : ''}: ${signal.text}`)
     .join('\n');
 
@@ -41,7 +59,7 @@ export default async function handler(request, response) {
     });
 
     const citations = [...new Set((result.text.match(/\[S\d+\]/g) || []))]
-      .filter((citation) => signals.some((signal) => `[${signal.id}]` === citation));
+      .filter((citation) => rankedSignals.some((signal) => `[${signal.id}]` === citation));
     return response.status(200).json({ answer: result.text, citations });
   } catch (error) {
     console.error('Deep Dive ask route failed', error);

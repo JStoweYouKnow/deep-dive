@@ -65,6 +65,12 @@ GPT-5.6 was especially useful for iterating across product, design, and implemen
 
 ## LLM-powered Ask Your Trail
 
-“Ask your trail” is a retrieval-backed feature, not a generic chatbot. When a user asks a question, Deep Dive selects up to 18 relevant local signals and asks the server-side AI route to answer only from that bounded evidence. The answer must cite the supplied signal IDs; it never has access to a user's wider browser history or a separate private profile.
+“Ask your trail” is a retrieval-backed feature, not a generic chatbot. When a user asks a question, Deep Dive selects a bounded set of relevant local signals and asks the server-side AI route to answer only from that evidence. The answer must cite the supplied signal IDs; it never has access to a user's wider browser history or a separate private profile.
 
 The feature uses the Vercel AI Gateway with `openai/gpt-5.4`. Before enabling it in a deployed project, enable AI Gateway in the Vercel project settings; Vercel OIDC handles server-side authentication without exposing a provider API key in browser code. The first Ask action clearly asks the user for consent before selected signals leave the device.
+
+### Stronger retrieval and imports
+
+Ask Your Trail now sends at most 36 consented candidate signals to the server, generates embeddings with `openai/text-embedding-3-small` through AI Gateway, reranks them semantically, then sends only the 12 most relevant signals to the answer model. If embeddings are temporarily unavailable, it safely falls back to the bounded candidate set.
+
+The importer recognizes Google Takeout search activity (`MyActivity.json`), ChatGPT exports (`conversations.json`), quoted CSV files, and simple text/JSON records. These files are parsed in the browser and become local activity; no import file is uploaded. Run `npm test` to verify the import adapters and retrieval utilities.

@@ -1,3 +1,5 @@
+import('./lib/importers.mjs').then((module) => { window.DeepDiveImporters = module; });
+
 window.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'deep-dive-studio-v2';
   const form = document.querySelector('#ask-form');
@@ -17,7 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
     return signals
       .map((signal) => ({ signal, score: tokens(signal.text).reduce((score, token) => score + (query.includes(token) ? 2 : 0), 0) }))
       .sort((a, b) => b.score - a.score || String(b.signal.createdAt).localeCompare(String(a.signal.createdAt)))
-      .slice(0, 18)
+      .slice(0, 36)
       .map(({ signal }) => signal);
   }
   function escape(value) {
@@ -33,11 +35,13 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!steps || steps.querySelector('[data-llm-notice]')) return;
     const item = document.createElement('div');
     item.dataset.llmNotice = 'true';
-    item.innerHTML = '<b>4</b><span><strong>Ask with consent</strong>Choosing “Ask your trail” sends a small set of relevant signals to the language model for that answer only.</span>';
+    item.innerHTML = '<b>4</b><span><strong>Ask with consent</strong>Choosing “Ask your trail” sends up to 36 relevant signals for semantic retrieval and one grounded answer.</span>';
     steps.append(item);
   }
 
   appendPrivacyNotice();
+  const importHelper = document.querySelector('#activity-file')?.closest('[data-panel]')?.querySelector('.helper');
+  if (importHelper) importHelper.innerHTML = 'Import <strong>Google Takeout</strong> search activity (<code>MyActivity.json</code>), a <strong>ChatGPT</strong> export (<code>conversations.json</code>), or a text/CSV/JSON file. Export files are read only in this browser.';
   if (!form || !input || !answer) return;
   form.onsubmit = async (event) => {
     event.preventDefault();
@@ -48,7 +52,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     const consentKey = 'deep-dive-llm-consent';
     if (!localStorage.getItem(consentKey)) {
-      const accepted = window.confirm('Ask your trail will send up to 18 relevant signals to the language model for this answer. Your full local trail is not uploaded. Continue?');
+      const accepted = window.confirm('Ask your trail will send up to 36 relevant signals for semantic retrieval and one grounded answer. Your full local trail is not uploaded. Continue?');
       if (!accepted) return;
       localStorage.setItem(consentKey, 'true');
     }

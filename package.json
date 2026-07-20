@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check app.js && node --check launch.js && node --check studio.js && node --check api/ask.mjs"
+    "check": "node --check app.js && node --check launch.js && node --check studio.js && node --check retrieval.js && node --check api/ask.mjs",
+    "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
     "ai": "^6.0.230"
