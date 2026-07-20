@@ -30,6 +30,7 @@ export default async function handler(request, response) {
   }
 
   let rankedSignals = signals;
+  let retrieval = 'semantic';
   try {
     const { embeddings } = await embedMany({
       model: 'openai/text-embedding-3-small',
@@ -44,6 +45,7 @@ export default async function handler(request, response) {
   } catch (error) {
     console.warn('Deep Dive semantic retrieval unavailable; using bounded local candidates.', error);
     rankedSignals = signals.slice(0, 12);
+    retrieval = 'bounded fallback';
   }
 
   const evidence = rankedSignals
@@ -60,7 +62,7 @@ export default async function handler(request, response) {
 
     const citations = [...new Set((result.text.match(/\[S\d+\]/g) || []))]
       .filter((citation) => rankedSignals.some((signal) => `[${signal.id}]` === citation));
-    return response.status(200).json({ answer: result.text, citations });
+    return response.status(200).json({ answer: result.text, citations, retrieval });
   } catch (error) {
     console.error('Deep Dive ask route failed', error);
     return response.status(502).json({ error: 'Deep Dive could not reach the language model. Your local trail was not changed.' });

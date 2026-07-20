@@ -68,7 +68,7 @@ window.addEventListener('DOMContentLoaded', () => {
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || 'The language model is unavailable.');
-      const citationList = payload.citations?.length ? `<div class="citation-list">Grounded in ${payload.citations.map((citation) => `<span>${escape(citation)}</span>`).join('')}</div>` : '';
+      const citationList = payload.citations?.length ? `<div class="citation-list"><span>${escape(payload.retrieval === 'semantic' ? 'Semantic retrieval' : 'Bounded retrieval')}</span> Grounded in ${payload.citations.map((citation) => `<span>${escape(citation)}</span>`).join('')}</div>` : '';
       show(`<div class="llm-answer">${escape(payload.answer).replace(/\n/g, '<br>')}</div>${citationList}`);
     } catch (error) {
       show(`${escape(error.message)} You can still inspect the local evidence in your threads.`, 'answer-error');
