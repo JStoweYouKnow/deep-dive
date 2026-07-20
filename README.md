@@ -2,6 +2,8 @@
 
 Deep Dive is a local-first research memory that turns searches and LLM chats into an explainable reading queue. This working MVP stores activity and feedback in the browser, derives recurring threads from imported or pasted signals, and queries Crossref for source-linked reading when the user asks it to.
 
+**Live app:** [oh-tell-me-more.vercel.app](https://oh-tell-me-more.vercel.app/)
+
 ## Product plan
 
 ### The user and the job
