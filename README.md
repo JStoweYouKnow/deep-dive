@@ -60,3 +60,9 @@ GPT-5.6 was especially useful for iterating across product, design, and implemen
 3. Iterate on interaction design, accessibility, responsive styling, and error states.
 4. Verify the static application and configuration, then deploy the production build.
 5. Package the source in this repository so the work can be reviewed and extended.
+
+## LLM-powered Ask Your Trail
+
+“Ask your trail” is a retrieval-backed feature, not a generic chatbot. When a user asks a question, Deep Dive selects up to 18 relevant local signals and asks the server-side AI route to answer only from that bounded evidence. The answer must cite the supplied signal IDs; it never has access to a user's wider browser history or a separate private profile.
+
+The feature uses the Vercel AI Gateway with `openai/gpt-5.4`. Before enabling it in a deployed project, enable AI Gateway in the Vercel project settings; Vercel OIDC handles server-side authentication without exposing a provider API key in browser code. The first Ask action clearly asks the user for consent before selected signals leave the device.

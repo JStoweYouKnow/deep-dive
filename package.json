@@ -1,0 +1,12 @@
+{
+  "name": "deep-dive",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check app.js && node --check launch.js && node --check studio.js && node --check api/ask.mjs"
+  },
+  "dependencies": {
+    "ai": "^6.0.230"
+  }
+}

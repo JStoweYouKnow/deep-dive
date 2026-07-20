@@ -3,3 +3,5 @@
 node_modules/
 work/
 outputs/
+.vercel
+.env*.local
